@@ -10,7 +10,7 @@
  */
 
 require('colors')
-const { Engine } = require('json-rules-engine')
+const { Engine } = require('../dist/json-rules-engine')
 
 async function start () {
   /**
@@ -34,7 +34,8 @@ async function start () {
     event: {
       type: 'message',
       params: {
-        data: 'hello-world!'
+        data: 'hello-world!',
+        x: "hi {{displayMessage}} fuzy {{x}}"
       }
     }
   })
@@ -44,12 +45,13 @@ async function start () {
    * Fact values do NOT need to be known at engine runtime; see the
    * 03-dynamic-facts.js example for how to pull in data asynchronously during runtime
    */
-  const facts = { displayMessage: true }
+  const facts = { displayMessage: true, x: 'wuzzy' }
 
   // engine.run() evaluates the rule using the facts provided
   const { events } = await engine.run(facts)
 
   events.map(event => console.log(event.params.data.green))
+  console.log(events);
 }
 
 start()

@@ -5,6 +5,8 @@ import Rule from './rule'
 import Operator from './operator'
 import Almanac from './almanac'
 import EventEmitter from 'eventemitter2'
+import Handlebars from "handlebars"
+
 import defaultOperators from './engine-default-operators'
 import debug from './debug'
 
@@ -214,7 +216,21 @@ class Engine extends EventEmitter {
       return rule.evaluate(almanac).then((ruleResult) => {
         debug(`engine::run ruleResult:${ruleResult.result}`)
         almanac.addResult(ruleResult)
+        debug(ruleResult)
         if (ruleResult.result) {
+
+          let { factMap } = almanac || {};
+          let factMapKeys = factMap.keys();
+          let factObj = {};
+          for(let key of factMapKeys){
+            factObj[key] = factMap.get(key).value
+          }
+          for( let field in ruleResult.event.params){
+            debug(field)
+            const template = Handlebars.compile(ruleResult.event.params[field]);
+            ruleResult.event.params[field] = template(factObj);
+          }
+
           almanac.addEvent(ruleResult.event, 'success')
           return this.emitAsync('success', ruleResult.event, almanac, ruleResult)
             .then(() => this.emitAsync(ruleResult.event.type, ruleResult.event.params, almanac, ruleResult))
