@@ -35,7 +35,7 @@ async function start () {
       type: 'message',
       params: {
         data: 'hello-world!',
-        x: "hi {{displayMessage}} fuzy {{x}}"
+        x: "hi {{displayMessage}} fuzy {{y.a}}"
       }
     }
   })
@@ -45,7 +45,7 @@ async function start () {
    * Fact values do NOT need to be known at engine runtime; see the
    * 03-dynamic-facts.js example for how to pull in data asynchronously during runtime
    */
-  const facts = { displayMessage: true, x: 'wuzzy' }
+  const facts = { displayMessage: true, x: 'wuzzy', y: { a:12, b:23} }
 
   // engine.run() evaluates the rule using the facts provided
   const { events } = await engine.run(facts)
